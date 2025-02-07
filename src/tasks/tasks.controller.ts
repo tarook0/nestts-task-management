@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Logger,
   Param,
   ParseIntPipe,
   Patch,
@@ -26,6 +27,7 @@ import { GetUser } from 'src/auth/get-user-decoratore';
 @Controller('tasks')
 @UseGuards(AuthGuard())
 export class TasksController {
+  private logger = new Logger(`Tasks Controller `);
   constructor(private taskService: TasksService) {}
   @Get('/:id')
   getTaskById(
@@ -39,20 +41,29 @@ export class TasksController {
     @Query(ValidationPipe) filterDto: GetTasksWithFilterDto,
     @GetUser() user: User,
   ) {
+    this.logger.verbose(
+      ` User ${user.userName}  retreving all tasks . Filters: ${JSON.stringify(filterDto)}`,
+    );
     return this.taskService.getTasks(filterDto, user);
   }
   @Post()
   @UsePipes(ValidationPipe)
   createTask(
-    @Body() createTask: CreateTaskDto,
+    @Body() createTaskDto: CreateTaskDto,
     @GetUser() user: User,
   ): Promise<Task> {
-    return this.taskService.createTask(createTask, user);
+    this.logger.verbose(
+      ` User ${user.userName}  create a new task  . Data : ${JSON.stringify(createTaskDto)}`,
+    );
+    return this.taskService.createTask(createTaskDto, user);
   }
 
   @Delete('/:id')
-  deleteTaskById(@Param('id', ParseIntPipe) id: number, @GetUser() user: User,): Promise<void> {
-    return this.taskService.deleteTaskById(id,user);
+  deleteTaskById(
+    @Param('id', ParseIntPipe) id: number,
+    @GetUser() user: User,
+  ): Promise<void> {
+    return this.taskService.deleteTaskById(id, user);
   }
 
   @Patch('/:id/status')
