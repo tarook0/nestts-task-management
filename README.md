@@ -30,5 +30,5 @@ npm run start
 ## Technologies Used
 - **NestJS:** Server-side application framework.
 - **TypeScript:** Type-safe programming language.
-- **MongoDB:** NoSQL database for task storage.
+- **Postgres:** NoSQL database for task storage.
 
